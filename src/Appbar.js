@@ -7,14 +7,29 @@ import Cookies from "js-cookie";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function Appbar(props) {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const config = {
     headers: {
       Authorization: "Bearer " + Cookies.get("token"),
     },
   };
+  useEffect(() => {
+    const getUserGroup = async () => {
+      const group = await axios.get("http://localhost:8080/controller/getUserGroup", config);
+      const groups = group.data.group_list.split(",");
+      function isAdmin(group) {
+        return group.toUpperCase() === "ADMIN";
+      }
+      if (groups.some(isAdmin)) {
+        setOpen(true);
+      }
+    };
+    getUserGroup();
+  }, []);
 
   function OnLoad() {
     const [isLogged, setIsLogged] = useState(null);
@@ -31,15 +46,10 @@ export default function Appbar(props) {
           }
         }
       };
-
       const getGroup = async (group) => {
         if (group !== undefined && group !== null && group !== "") {
           try {
-            const res = await axios.post(
-              "http://localhost:8080/controller/checkGroup",
-              { group: group },
-              config
-            );
+            const res = await axios.post("http://localhost:8080/controller/checkGroup", { group: group }, config);
             setIsGroup(res.data);
           } catch (err) {
             if (err.response.status === 401) {
@@ -68,19 +78,19 @@ export default function Appbar(props) {
   }
 
   OnLoad();
-
   //home
   const homePage = () => {
-    if (props.group === "admin") {
-      navigate("/adminhome");
-    } else {
-      navigate("/home");
-    }
+    navigate("/home");
+  };
+
+  //accountManagement
+  const accountManagement = () => {
+    navigate("/accountmanagement");
   };
 
   //myaccount
   const myAccount = () => {
-    navigate("/myaccount", { state: { group: props.group } });
+    navigate("/myaccount");
   };
 
   //logout

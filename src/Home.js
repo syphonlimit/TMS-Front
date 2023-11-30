@@ -9,12 +9,17 @@ import Appbar from "./Appbar";
 const defaultTheme = createTheme();
 
 export default function Home() {
+  //Authorization
+  const config = {
+    headers: {
+      Authorization: "Bearer " + Cookies.get("token"),
+    },
+  };
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
       <Appbar title="Home" />
       <main>
-        {/* Hero unit */}
         <Box
           sx={{
             bgcolor: "background.paper",

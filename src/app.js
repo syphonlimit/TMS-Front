@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import AdminHome from "./AdminHome.js";
+import AccountManagement from "./AccountManagement.js";
 import DispatchContext from "./DispatchContext.js";
 import Home from "./Home.js";
 import Login from "./Login.js";
@@ -31,8 +31,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/adminhome" element={<AdminHome />} />
         <Route path="/myaccount" element={<MyAccount />} />
+        <Route path="/accountmanagement" element={<AccountManagement />} />
       </Routes>
     </DispatchContext.Provider>
   );
