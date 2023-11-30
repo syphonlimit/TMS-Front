@@ -7,7 +7,6 @@ import Cookies from "js-cookie";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
 
 export default function Appbar(props) {
   const navigate = useNavigate();
@@ -111,6 +110,11 @@ export default function Appbar(props) {
         <Typography variant="h6" color="inherit" noWrap component="div" sx={{ flexGrow: 1 }}>
           {props.title}
         </Typography>
+        {open && (
+          <Button color="inherit" onClick={accountManagement}>
+            Account Management
+          </Button>
+        )}
         <Button color="inherit" onClick={myAccount}>
           My Account
         </Button>
