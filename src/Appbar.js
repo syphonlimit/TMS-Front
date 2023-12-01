@@ -29,7 +29,7 @@ export default function Appbar(props) {
     };
     getUserGroup();
   }, []);
-
+  /*
   function OnLoad() {
     const [isLogged, setIsLogged] = useState(null);
     const [isGroup, setIsGroup] = useState(null);
@@ -77,6 +77,7 @@ export default function Appbar(props) {
   }
 
   OnLoad();
+  */
   //home
   const homePage = () => {
     navigate("/home");

@@ -32,6 +32,7 @@ const createOption = (label) => ({
 });
 
 export default function AccountManagement() {
+  const navigate = useNavigate();
   const [inputValue, setInputValue] = React.useState("");
   const [createValue, setCreateValue] = React.useState([]);
   const [users, setUsers] = useState({
@@ -45,6 +46,7 @@ export default function AccountManagement() {
   const [groupOptions, setGroupOptions] = React.useState([]);
   const appDispatch = React.useContext(DispatchContext);
 
+  //Handles key down events in the react-select field for 'Create group'
   const handleKeyDown = (event) => {
     if (!inputValue) return;
     switch (event.key) {
@@ -55,6 +57,24 @@ export default function AccountManagement() {
         event.preventDefault();
     }
   };
+
+  useEffect(() => {
+    const checkGroup = async () => {
+      try {
+        const res = await axios.post("http://localhost:8080/controller/checkGroup", { group: "admin" }, config);
+        if (!res.data.data) {
+          navigate("/");
+        }
+        console.log(res);
+      } catch (err) {
+        console.log(err);
+        if (err.response.status === 401) {
+          navigate("/");
+        }
+      }
+    };
+    checkGroup();
+  }, []);
 
   async function fetchData() {
     try {
