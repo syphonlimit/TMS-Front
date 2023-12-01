@@ -20,7 +20,6 @@ import CreatableSelect from "react-select/creatable";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Appbar from "./Appbar";
-import DispatchContext from "./DispatchContext";
 
 const defaultTheme = createTheme();
 const components = {
@@ -45,7 +44,6 @@ export default function AccountManagement() {
   });
   const [table, setTable] = useState([]);
   const [groupOptions, setGroupOptions] = React.useState([]);
-  const appDispatch = React.useContext(DispatchContext);
 
   //Handles key down events in the react-select field for 'Create group'
   const handleKeyDown = (event) => {
@@ -58,23 +56,6 @@ export default function AccountManagement() {
         event.preventDefault();
     }
   };
-  useEffect(() => {
-    const checkGroup = async () => {
-      try {
-        const res = await axios.post("http://localhost:8080/controller/checkGroup", { group: "admin" }, config);
-        if (!res.data) {
-          navigate("/");
-        }
-        console.log(res);
-      } catch (err) {
-        console.log(err);
-        if (err.response.status === 401) {
-          navigate("/");
-        }
-      }
-    };
-    checkGroup();
-  }, []);
 
   async function fetchData() {
     try {
@@ -86,7 +67,9 @@ export default function AccountManagement() {
         })
       );
     } catch (err) {
-      appDispatch({ type: err.response.status.toString() });
+      if (err.response.status === 401) {
+        navigate("/");
+      }
     }
   }
 
@@ -137,8 +120,11 @@ export default function AccountManagement() {
             return row;
           })
         );
-      } catch (e) {
-        appDispatch({ type: e.response.status.toString() });
+      } catch (error) {
+        toast.error(error.response.data.errMessage);
+        if (error.response.status === 401) {
+          navigate("/");
+        }
       }
     }
   }
@@ -157,8 +143,11 @@ export default function AccountManagement() {
           return row;
         })
       );
-    } catch (e) {
-      appDispatch({ type: e.response.status.toString() });
+    } catch (error) {
+      toast.error(error.response.data.errMessage);
+      if (error.response.status === 401) {
+        navigate("/");
+      }
     }
   }
 
@@ -183,9 +172,11 @@ export default function AccountManagement() {
         is_disabled: 0,
       });
       fetchData();
-    } catch (err) {
-      toast.error(err.response.data.errMessage);
-      appDispatch({ type: err.response.status.toString() });
+    } catch (error) {
+      toast.error(error.response.data.errMessage);
+      if (error.response.status === 401) {
+        navigate("/");
+      }
     }
   }
 
@@ -209,7 +200,10 @@ export default function AccountManagement() {
       setCreateValue([]);
       getGroups();
     } catch (error) {
-      appDispatch({ type: error.response.status.toString() });
+      toast.error(error.response.data.errMessage);
+      if (error.response.status === 401) {
+        navigate("/");
+      }
     }
   };
 
@@ -225,7 +219,9 @@ export default function AccountManagement() {
       const res = await axios.get("http://localhost:8080/controller/getGroups", config);
       setGroupOptions(res.data.data.map(getGroupsValue));
     } catch (err) {
-      appDispatch({ type: err.response.status.toString() });
+      if (err.response.status === 401) {
+        navigate("/");
+      }
     }
   };
 

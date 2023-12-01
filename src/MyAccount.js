@@ -9,13 +9,14 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import * as React from "react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import Appbar from "./Appbar";
-import DispatchContext from "./DispatchContext";
 
 const defaultTheme = createTheme();
 
 export default function MyAccount() {
+  const navigate = useNavigate();
   //defining the details that the const variable is going to hold
   const [defAccInfo, setDefAccInfo] = useState({
     username: "",
@@ -27,7 +28,7 @@ export default function MyAccount() {
   const [editButton, setEditButton] = useState("Edit");
   //const [errorMessage, setErrorMessage] = useState("");
   //const [open, setOpen] = React.useState(false);
-  const appDispatch = React.useContext(DispatchContext);
+
   //Authorization
   const config = {
     headers: {
@@ -44,7 +45,9 @@ export default function MyAccount() {
         //populates setDefAccInfo variable with the currently fetched data
         setDefAccInfo(response.data.data);
       } catch (err) {
-        appDispatch({ type: err.response.status });
+        if (err.response.status === 401) {
+          navigate("/");
+        }
       }
     }
     fetchData();
