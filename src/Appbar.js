@@ -18,13 +18,20 @@ export default function Appbar(props) {
   };
   useEffect(() => {
     const checkGroup = async () => {
-      const res = await axios.post("http://localhost:8080/controller/checkGroup", { group: "admin" }, config);
-      if (res.data) {
-        setOpen(true);
+      try {
+        const res = await axios.post("http://localhost:8080/controller/checkGroup", { group: "admin" }, config);
+        if (res.data) {
+          setOpen(true);
+        }
+      } catch (err) {
+        if (err.response.status === 401) {
+          navigate("/");
+        }
       }
     };
     checkGroup();
-  }, []);
+  }, [props.call]);
+
   useEffect(() => {
     const checkLogin = async () => {
       try {
@@ -36,7 +43,7 @@ export default function Appbar(props) {
       }
     };
     checkLogin();
-  }, []);
+  }, [props.call]);
   useEffect(() => {
     const checkGroup = async () => {
       if (props.group !== undefined && props.group !== null && props.group !== "") {
@@ -53,7 +60,7 @@ export default function Appbar(props) {
       }
     };
     checkGroup();
-  }, []);
+  }, [props.call]);
   //home
   const homePage = () => {
     navigate("/home");

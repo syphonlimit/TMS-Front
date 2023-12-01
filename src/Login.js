@@ -9,7 +9,6 @@ import Typography from "@mui/material/Typography";
 import axios from "axios";
 import Cookies from "js-cookie";
 import * as React from "react";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,31 +23,6 @@ export default function SignIn() {
       Authorization: "Bearer " + Cookies.get("token"),
     },
   };
-
-  //Check for when user is already logged in
-  useEffect(() => {
-    async function checkLogin() {
-      try {
-        const isLogin = await axios.get("http://localhost:8080/controller/checkLogin", config);
-        if (isLogin.data) {
-          navigate("/home");
-        }
-      } catch (error) {
-        //If there is a response and is error, output this
-        if (error.response) {
-          toast.error(error.response.data.errMessage, { autoClose: false });
-        }
-        //Fallback logging error if all else fails (eg. server down)
-        else {
-          toast.error("Server has issues.", { autoClose: false });
-        }
-      }
-    }
-    if (Cookies.get("token")) {
-      //check with server
-      checkLogin();
-    }
-  }, []);
 
   //Handling what happens during the submission
   const handleSubmit = async (event) => {

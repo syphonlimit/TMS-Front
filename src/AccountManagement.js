@@ -33,8 +33,9 @@ const createOption = (label) => ({
 
 export default function AccountManagement() {
   const navigate = useNavigate();
-  const [inputValue, setInputValue] = React.useState("");
-  const [createValue, setCreateValue] = React.useState([]);
+  const [call, setCall] = useState(0);
+  const [inputValue, setInputValue] = useState("");
+  const [createValue, setCreateValue] = useState([]);
   const [users, setUsers] = useState({
     username: "",
     email: "",
@@ -111,6 +112,7 @@ export default function AccountManagement() {
       try {
         const response = await axios.put("http://localhost:8080/controller/updateUser/" + row.username, body, config);
         toast.success(response.data.message);
+        setCall(call + 1);
         setTable(
           table.map((row) => {
             if (row.username === id) {
@@ -135,6 +137,7 @@ export default function AccountManagement() {
     try {
       const response = await axios.put("http://localhost:8080/controller/toggleUserStatus/" + user, {}, config);
       toast.success(response.data.message);
+      setCall(call + 1);
       setTable(
         table.map((row) => {
           if (row.username === user) {
@@ -143,9 +146,9 @@ export default function AccountManagement() {
           return row;
         })
       );
-    } catch (error) {
-      toast.error(error.response.data.errMessage);
-      if (error.response.status === 401) {
+    } catch (err) {
+      toast.error(err.response.data.errMessage);
+      if (err.response.status === 401) {
         navigate("/");
       }
     }
@@ -352,7 +355,7 @@ export default function AccountManagement() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <Appbar title="Admin Home" group="admin" />
+      <Appbar title="Account Management" group="admin" call={call} />
       <main>
         <Container maxWidth="lg">
           <Box

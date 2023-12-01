@@ -14,7 +14,6 @@ import { toast, ToastContainer } from "react-toastify";
 import Appbar from "./Appbar";
 
 const defaultTheme = createTheme();
-
 export default function MyAccount() {
   const navigate = useNavigate();
   //defining the details that the const variable is going to hold
@@ -26,8 +25,6 @@ export default function MyAccount() {
   });
   const [fieldDisabled, setFieldDisabled] = useState(true);
   const [editButton, setEditButton] = useState("Edit");
-  //const [errorMessage, setErrorMessage] = useState("");
-  //const [open, setOpen] = React.useState(false);
 
   //Authorization
   const config = {
@@ -82,13 +79,9 @@ export default function MyAccount() {
           ...defAccInfo,
           password: "",
         });
-        //setOpen(false);
-        //setErrorMessage("");
         toast.success("Account updated successfully");
       } catch (error) {
         toast.error(error.response.data.errMessage);
-        //setErrorMessage(error.response.data.errMessage);
-        //setOpen(true);
       }
     }
   };
@@ -164,8 +157,6 @@ export default function MyAccount() {
                 })
               }
             />
-            {/*error message*/}
-            {/*{open && <Alert severity="error">{errorMessage}</Alert>}*/}
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               {editButton}
             </Button>
