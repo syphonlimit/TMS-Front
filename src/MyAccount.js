@@ -16,6 +16,7 @@ import DispatchContext from "./DispatchContext";
 const defaultTheme = createTheme();
 
 export default function MyAccount() {
+  //defining the details that the const variable is going to hold
   const [defAccInfo, setDefAccInfo] = useState({
     username: "",
     email: "",
@@ -40,6 +41,7 @@ export default function MyAccount() {
         const response = await axios.get("http://localhost:8080/controller/getUser/", config);
         //set password in response to empty
         response.data.data.password = "";
+        //populates setDefAccInfo variable with the currently fetched data
         setDefAccInfo(response.data.data);
       } catch (err) {
         appDispatch({ type: err.response.status });
@@ -51,19 +53,25 @@ export default function MyAccount() {
   //Handling submission of email and/or password
   const handleSubmit = async (event) => {
     event.preventDefault();
+    //Enables field to be editable to change from 'Edit' to 'Save'
     if (fieldDisabled) {
       setFieldDisabled(false);
       setEditButton("Save");
-    } else {
+    }
+    //Once button is named 'Save', this will run after pressing the button
+    else {
       const data = new FormData(event.currentTarget);
+      //updateEmail holds the new value
       const updateEmail = { email: data.get("email") };
       try {
+        //updateEmail and config send to backend, backend check for token from config
         const res = await axios.put("http://localhost:8080/controller/updateUserEmail/", updateEmail, config);
         if (data.get("password") !== null && data.get("password") !== "") {
           const updatePassword = { password: data.get("password") };
-
+          //Same as the above email but passing updatePassword instead
           await axios.put("http://localhost:8080/controller/updateUserPassword/", updatePassword, config);
         }
+        //After pressing 'Save', 'Save' changes back to 'Edit'
         setFieldDisabled(true);
         setEditButton("Edit");
         //if password field is not empty, set it to empty
@@ -86,6 +94,7 @@ export default function MyAccount() {
       <CssBaseline />
       <Appbar title="My Account" />
       <main>
+        {/*Set props for toast */}
         <ToastContainer
           position="top-center"
           autoClose={5000}

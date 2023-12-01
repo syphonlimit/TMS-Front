@@ -34,12 +34,11 @@ export default function SignIn() {
           navigate("/home");
         }
       } catch (error) {
-        //using toastify to set up error message
-        //Logging error if there is a response
+        //If there is a response and is error, output this
         if (error.response) {
           toast.error(error.response.data.errMessage, { autoClose: false });
         }
-        //Fallback logging error is all else fails (eg. server down)
+        //Fallback logging error if all else fails (eg. server down)
         else {
           toast.error("Server has issues.", { autoClose: false });
         }
@@ -71,13 +70,9 @@ export default function SignIn() {
       //Cookies.set("username", res.data.username, { expires: 7 });
       navigate("/home");
     } catch (error) {
-      //using toastify to set up error message
-      //Logging error if there is a response
       if (error.response) {
         toast.error(error.response.data.errMessage, { autoClose: false });
-      }
-      //Fallback logging error is all else fails (eg. server down)
-      else {
+      } else {
         toast.error("Server has issues.", { autoClose: false });
       }
     }
