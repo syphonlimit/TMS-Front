@@ -14,6 +14,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import * as React from "react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 import { toast, ToastContainer } from "react-toastify";
@@ -57,12 +58,11 @@ export default function AccountManagement() {
         event.preventDefault();
     }
   };
-
   useEffect(() => {
     const checkGroup = async () => {
       try {
         const res = await axios.post("http://localhost:8080/controller/checkGroup", { group: "admin" }, config);
-        if (!res.data.data) {
+        if (!res.data) {
           navigate("/");
         }
         console.log(res);

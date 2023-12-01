@@ -9,7 +9,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import Appbar from "./Appbar";
 import DispatchContext from "./DispatchContext";
@@ -27,7 +26,6 @@ export default function MyAccount() {
   const [editButton, setEditButton] = useState("Edit");
   //const [errorMessage, setErrorMessage] = useState("");
   //const [open, setOpen] = React.useState(false);
-  const { state } = useLocation();
   const appDispatch = React.useContext(DispatchContext);
   //Authorization
   const config = {
@@ -86,7 +84,7 @@ export default function MyAccount() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <Appbar title="My Account" group={state.group} />
+      <Appbar title="My Account" />
       <main>
         <ToastContainer
           position="top-center"
