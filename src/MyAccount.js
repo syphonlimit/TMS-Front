@@ -41,9 +41,11 @@ export default function MyAccount() {
         response.data.data.password = "";
         //populates setDefAccInfo variable with the currently fetched data
         setDefAccInfo(response.data.data);
-      } catch (err) {
-        if (err.response.status === 401) {
-          navigate("/");
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 401) navigate("/");
+        } else {
+          //toast.error("Server has issues.");
         }
       }
     }
@@ -81,7 +83,11 @@ export default function MyAccount() {
         });
         toast.success("Account updated successfully");
       } catch (error) {
-        toast.error(error.response.data.errMessage);
+        if (error.response) {
+          toast.error(error.response.data.errMessage);
+        } else {
+          toast.error("Server has issues.");
+        }
       }
     }
   };

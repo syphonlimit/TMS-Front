@@ -7,6 +7,8 @@ import Cookies from "js-cookie";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Appbar(props) {
   const navigate = useNavigate();
@@ -23,9 +25,11 @@ export default function Appbar(props) {
         if (res.data) {
           setOpen(true);
         }
-      } catch (err) {
-        if (err.response.status === 401) {
-          navigate("/");
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 401) navigate("/");
+        } else {
+          toast.error("Server has issues.");
         }
       }
     };
@@ -36,9 +40,11 @@ export default function Appbar(props) {
     const checkLogin = async () => {
       try {
         await axios.get("http://localhost:8080/controller/checkLogin", config);
-      } catch (err) {
-        if (err.response.status === 401) {
-          navigate("/");
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 401) navigate("/");
+        } else {
+          toast.error("Server has issues.");
         }
       }
     };
@@ -52,9 +58,9 @@ export default function Appbar(props) {
           if (!res.data) {
             navigate("/");
           }
-        } catch (err) {
-          if (err.response.status === 401) {
-            navigate("/");
+        } catch (error) {
+          if (error.response) {
+            if (error.response.status === 401) navigate("/");
           }
         }
       }
