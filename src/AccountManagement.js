@@ -394,7 +394,7 @@ export default function AccountManagement() {
                   onChange={(newValue) => setCreateValue(newValue)}
                   onInputChange={(newValue) => setInputValue(newValue)}
                   onKeyDown={handleKeyDown}
-                  placeholder="--Type Group Name--"
+                  placeholder="Type Group Name..."
                   value={createValue}
                 />
               </Grid>
