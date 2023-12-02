@@ -58,6 +58,7 @@ export default function AccountManagement() {
     }
   };
 
+  //Getting the info from database to populate the table
   async function fetchData() {
     try {
       const res = await axios.get("http://localhost:8080/controller/getUsers/", config);
@@ -67,8 +68,8 @@ export default function AccountManagement() {
           return { ...user, editDisabled: true, password: "" };
         })
       );
-    } catch (err) {
-      if (err.response.status === 401) {
+    } catch (error) {
+      if (error.response.status === 401) {
         navigate("/");
       }
     }
@@ -131,6 +132,7 @@ export default function AccountManagement() {
     }
   }
 
+  //'Disable/Enable' User event
   async function handleDisable(e, row) {
     e.preventDefault();
     const user = row.username;
@@ -154,6 +156,7 @@ export default function AccountManagement() {
     }
   }
 
+  //'Create User' event
   async function createUser(e) {
     //we need to reinit the config incase the token has changed
     config.headers.Authorization = "Bearer " + Cookies.get("token");
@@ -194,6 +197,7 @@ export default function AccountManagement() {
     },
   };
 
+  //'Create group' event
   const createGroup = async (event) => {
     event.preventDefault();
     try {
@@ -390,7 +394,7 @@ export default function AccountManagement() {
                   onChange={(newValue) => setCreateValue(newValue)}
                   onInputChange={(newValue) => setInputValue(newValue)}
                   onKeyDown={handleKeyDown}
-                  placeholder=""
+                  placeholder="--Type Group Name--"
                   value={createValue}
                 />
               </Grid>
@@ -403,6 +407,7 @@ export default function AccountManagement() {
             <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
               <TableHead>
                 <TableRow>
+                  {/* Table heading names */}
                   <TableCell align="center">Username</TableCell>
                   <TableCell align="center">Email</TableCell>
                   <TableCell align="center">Password</TableCell>
