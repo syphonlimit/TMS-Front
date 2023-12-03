@@ -44,8 +44,6 @@ export default function MyAccount() {
       } catch (error) {
         if (error.response) {
           if (error.response.status === 401) navigate("/");
-        } else {
-          //toast.error("Server has issues.");
         }
       }
     }

@@ -69,8 +69,10 @@ export default function AccountManagement() {
         })
       );
     } catch (error) {
-      if (error.response.status === 401) {
-        navigate("/");
+      if (error.response) {
+        if (error.response.status === 401) {
+          navigate("/");
+        }
       }
     }
   }
@@ -148,9 +150,9 @@ export default function AccountManagement() {
           return row;
         })
       );
-    } catch (err) {
-      toast.error(err.response.data.errMessage);
-      if (err.response.status === 401) {
+    } catch (error) {
+      toast.error(error.response.data.errMessage);
+      if (error.response.status === 401) {
         navigate("/");
       }
     }
@@ -225,9 +227,9 @@ export default function AccountManagement() {
     try {
       const res = await axios.get("http://localhost:8080/controller/getGroups", config);
       setGroupOptions(res.data.data.map(getGroupsValue));
-    } catch (err) {
-      if (err.response.status === 401) {
-        navigate("/");
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 401) navigate("/");
       }
     }
   };
