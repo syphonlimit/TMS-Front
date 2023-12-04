@@ -82,7 +82,7 @@ export default function Appbar(props) {
 
   //logout
   const logOut = () => {
-    axios.get("http://localhost:8080/controller/_logout", config);
+    axios.get("http://localhost:8080/controller/_logout", config).catch(() => {});
     Cookies.remove("token");
     navigate("/");
   };
