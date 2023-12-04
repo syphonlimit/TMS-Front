@@ -116,57 +116,67 @@ export default function MyAccount() {
             alignItems: "center",
           }}
         >
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: "50%" }}>
             {/* Creating box to output read-only username and group list */}
-            <Box sx={{ border: 1, align: "left", p: 1 }}>
-              <Typography component="h1" variant="h5">
-                Username: {defAccInfo.username}
-              </Typography>
-              <Typography component="h1" variant="h5">
-                Groups: {defAccInfo.group_list}
-              </Typography>
-            </Box>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              autoComplete="email"
-              value={defAccInfo.email}
-              onChange={(e) =>
-                setDefAccInfo({
-                  ...defAccInfo,
-                  email: e.target.value,
-                })
-              }
-              disabled={fieldDisabled}
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              value={defAccInfo.password}
-              disabled={fieldDisabled}
-              onChange={(e) =>
-                setDefAccInfo({
-                  ...defAccInfo,
-                  password: e.target.value,
-                })
-              }
-            />
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-              {editButton}
-            </Button>
-            <Grid container>
-              <Grid item xs></Grid>
-              <Grid item></Grid>
+            <Grid container spacing={1}>
+              <Grid xs={4}>
+                <Typography component="h1" variant="h5">
+                  Username: {defAccInfo.username}
+                </Typography>
+              </Grid>
+              <Grid xs={3} style={{ flexGrow: "1" }}></Grid>
+              <Grid xs={5}>
+                <Typography component="h1" variant="h5">
+                  Groups: {defAccInfo.group_list}
+                </Typography>
+              </Grid>
+              <Grid xs={6}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email"
+                  name="email"
+                  autoComplete="email"
+                  value={defAccInfo.email}
+                  onChange={(e) =>
+                    setDefAccInfo({
+                      ...defAccInfo,
+                      email: e.target.value,
+                    })
+                  }
+                  disabled={fieldDisabled}
+                  autoFocus
+                />
+              </Grid>
+
+              <Grid xs={6}></Grid>
+              <Grid xs={6}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  value={defAccInfo.password}
+                  disabled={fieldDisabled}
+                  onChange={(e) =>
+                    setDefAccInfo({
+                      ...defAccInfo,
+                      password: e.target.value,
+                    })
+                  }
+                />
+              </Grid>
+              <Grid style={{ flexGrow: "1" }}></Grid>
+              <Grid sx={5}>
+                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                  {editButton}
+                </Button>
+              </Grid>
             </Grid>
           </Box>
         </Box>
