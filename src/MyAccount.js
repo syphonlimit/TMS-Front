@@ -173,7 +173,7 @@ export default function MyAccount() {
               </Grid>
               <Grid style={{ flexGrow: "1" }}></Grid>
               <Grid sx={5}>
-                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} size="large">
                   {editButton}
                 </Button>
               </Grid>
