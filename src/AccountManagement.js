@@ -114,7 +114,7 @@ export default function AccountManagement() {
       body.group = group_list;
       try {
         const response = await axios.put("http://localhost:8080/controller/updateUser/" + row.username, body, config);
-        toast.success(response.data.message);
+        toast.success(response.data.message, { autoClose: 1500 });
         setCall(call + 1);
         setTable(
           table.map((row) => {
@@ -140,7 +140,7 @@ export default function AccountManagement() {
     const user = row.username;
     try {
       const response = await axios.put("http://localhost:8080/controller/toggleUserStatus/" + user, {}, config);
-      toast.success(response.data.message);
+      toast.success(response.data.message, { autoClose: 1500 });
       setCall(call + 1);
       setTable(
         table.map((row) => {
@@ -171,7 +171,7 @@ export default function AccountManagement() {
     };
     try {
       const res = await axios.post("http://localhost:8080/controller/register", body, config);
-      toast.success(res.data.message);
+      toast.success(res.data.message, { autoClose: 1500 });
       setUsers({
         username: "",
         email: "",
@@ -205,7 +205,7 @@ export default function AccountManagement() {
     try {
       const creGrp = { group_name: createValue.map(getCreateValue).join(",") };
       const res = await axios.post("http://localhost:8080/controller/createGroup/", creGrp, config);
-      toast.success(res.data.message);
+      toast.success(res.data.message, { autoClose: 1500 });
       setCreateValue([]);
       getGroups();
     } catch (error) {
@@ -373,7 +373,6 @@ export default function AccountManagement() {
             }}
           >
             <ToastContainer
-              position="top-center"
               autoClose={5000}
               hideProgressBar={false}
               newestOnTop={false}
