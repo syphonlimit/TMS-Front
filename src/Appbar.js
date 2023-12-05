@@ -40,7 +40,10 @@ export default function Appbar(props) {
         await axios.get("http://localhost:8080/controller/checkLogin", config);
       } catch (error) {
         if (error.response) {
-          if (error.response.status === 401) navigate("/");
+          if (error.response.status === 401) {
+            Cookies.remove("token");
+            navigate("/");
+          }
         } else {
           toast.error("Server has issues.");
         }
@@ -82,7 +85,6 @@ export default function Appbar(props) {
 
   //logout
   const logOut = () => {
-    axios.get("http://localhost:8080/controller/_logout", config).catch(() => {});
     Cookies.remove("token");
     navigate("/");
   };
