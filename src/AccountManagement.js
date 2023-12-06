@@ -259,6 +259,7 @@ export default function AccountManagement() {
       state[item.type] = item.content;
     };
 
+    //User creation fields
     return (
       <>
         <TableRow key={state.username} noValidate>
@@ -309,6 +310,7 @@ export default function AccountManagement() {
       state[index][item.type] = item.content;
     };
 
+    //Update field behaviour upon clicking 'Edit'
     return (
       <>
         {state.map((item, index) => (
@@ -343,6 +345,7 @@ export default function AccountManagement() {
                 value={groupOptions.filter((option) => item.group_list.split(",").includes(option.value))}
               />
             </TableCell>
+            {/* Edit and disable/enable button */}
             <TableCell align="center">{item.is_disabled === 0 ? "Active" : "Disabled"}</TableCell>
             <TableCell align="center">
               <Button id={item.username + "_button"} variant="outlined" onClick={(e) => handleSubmit(e, item)}>
@@ -409,9 +412,9 @@ export default function AccountManagement() {
               <TableHead>
                 <TableRow>
                   {/* Table heading names */}
-                  <TableCell align="center">Username</TableCell>
+                  <TableCell align="center">Username*</TableCell>
                   <TableCell align="center">Email</TableCell>
-                  <TableCell align="center">Password</TableCell>
+                  <TableCell align="center">Password*</TableCell>
                   <TableCell align="center">Group</TableCell>
                   <TableCell align="center">Status</TableCell>
                   <TableCell align="center">Management</TableCell>

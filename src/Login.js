@@ -39,7 +39,6 @@ export default function SignIn() {
 
       //Removes any existing cookies and set new cookie
       Cookies.remove("token");
-      Cookies.remove("username");
       Cookies.set("token", res.data.token, { expires: 7 });
       //Cookies.set("username", res.data.username, { expires: 7 });
       navigate("/home");
