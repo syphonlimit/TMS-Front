@@ -19,6 +19,7 @@ export default function Appbar(props) {
     },
   };
   useEffect(() => {
+    //Checkgroup function here for account management button
     const checkGroup = async () => {
       try {
         const res = await axios.post("http://localhost:8080/controller/checkGroup", { group: "admin" }, config);
@@ -52,6 +53,7 @@ export default function Appbar(props) {
     checkLogin();
   }, [props.call]);
   useEffect(() => {
+    //Checkgroup function here to check if user has access rights for the page
     const checkGroup = async () => {
       if (props.group !== undefined && props.group !== null && props.group !== "") {
         try {
