@@ -79,7 +79,7 @@ export default function MyAccount() {
           ...defAccInfo,
           password: "",
         });
-        toast.success("Account updated successfully");
+        toast.success("Account updated successfully", { autoClose: 1500 });
       } catch (error) {
         if (error.response) {
           toast.error(error.response.data.errMessage);
@@ -96,7 +96,6 @@ export default function MyAccount() {
       <main>
         {/*Set props for toast */}
         <ToastContainer
-          position="top-center"
           autoClose={5000}
           hideProgressBar={false}
           newestOnTop={false}

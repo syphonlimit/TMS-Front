@@ -44,9 +44,9 @@ export default function SignIn() {
       navigate("/home");
     } catch (error) {
       if (error.response) {
-        toast.error(error.response.data.errMessage, { autoClose: false });
+        toast.error(error.response.data.errMessage);
       } else {
-        toast.error("Server has issues.", { autoClose: false });
+        toast.error("Server has issues.");
       }
     }
   };
@@ -85,7 +85,7 @@ export default function SignIn() {
               Sign In
             </Button>
             {/* Modifies toast with additional props */}
-            <ToastContainer closeOnClick theme="colored" />
+            <ToastContainer closeOnClick autoClose="5000" />
             <Grid container>
               <Grid item xs></Grid>
               <Grid item></Grid>
