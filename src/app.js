@@ -4,6 +4,7 @@ import AccountManagement from "./AccountManagement.js";
 import Home from "./Home.js";
 import Login from "./Login.js";
 import MyAccount from "./MyAccount.js";
+import Kanban from "./Kanban.js";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Route path="/home" element={<Home />} />
       <Route path="/myaccount" element={<MyAccount />} />
       <Route path="/accountmanagement" element={<AccountManagement />} />
+      <Route path="/kanban" element={<Kanban />} />
     </Routes>
   );
 }
