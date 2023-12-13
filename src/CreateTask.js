@@ -7,7 +7,11 @@ import Grid from "@mui/material/Grid";
 import Slide from "@mui/material/Slide";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import axios from "axios";
+import Cookies from "js-cookie";
 import * as React from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -24,7 +28,14 @@ export default function CreateTask(props) {
     setOpen(false);
   };
 
+  const config = {
+    headers: {
+      Authorization: "Bearer " + Cookies.get("token"),
+    },
+  };
+
   const handleSubmit = async (event) => {
+    console.log("hello");
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const task = {
@@ -34,7 +45,9 @@ export default function CreateTask(props) {
     };
     try {
       //Communicate with backend using Axios request
-      const res = await axios.post("http://localhost:8080/controller/createTask", task);
+      const res = await axios.post("http://localhost:8080/controller/createTask", task, config);
+      toast.success("Task created successfully", { autoClose: 1500 });
+      setOpen(false);
     } catch (error) {
       if (error.response) {
         toast.error(error.response.data.errMessage);
@@ -42,12 +55,11 @@ export default function CreateTask(props) {
         toast.error("Server has issues.");
       }
     }
-
-    setOpen(false);
   };
 
   return (
     <React.Fragment>
+      <ToastContainer hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light" />
       <Button variant="outlined" onClick={handleClickOpen}>
         Create Task
       </Button>
@@ -56,6 +68,7 @@ export default function CreateTask(props) {
           <CssBaseline />
           <Box
             component="form"
+            noValidate
             onSubmit={handleSubmit}
             sx={{
               marginTop: 8,
