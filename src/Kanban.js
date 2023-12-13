@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 import * as React from "react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import CreateTask from "../CreateTask";
+import CreateTask from "./CreateTask";
 import Appbar from "./Appbar";
 
 const defaultTheme = createTheme();
