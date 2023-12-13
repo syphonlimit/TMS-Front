@@ -1,13 +1,14 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { Button, Container, Grid, IconButton, List, ListItem, ListItemText, Paper, Typography } from "@mui/material";
+import { Container, Grid, IconButton, List, ListItem, ListItemText, Paper, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Cookies from "js-cookie";
 import * as React from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import CreateTask from "../CreateTask";
 import Appbar from "./Appbar";
 
 const defaultTheme = createTheme();
@@ -79,10 +80,12 @@ export default function Kanban() {
     }
   };
 
+  const { state } = useLocation();
+  const { acronym } = state;
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <Appbar title="Kanban" />
+      <Appbar title={acronym} />
       <main>
         <Box
           sx={{
@@ -91,10 +94,10 @@ export default function Kanban() {
             pb: 6,
           }}
         >
-          <Container maxWidth="xl" style={{ padding: "16px" }}>
-            <Box mb={2} paddingLeft={23}>
+          <Container maxWidth="false" style={{ padding: "16px" }}>
+            <Box mb={2} paddingLeft={20}>
               {/* Leave space for buttons */}
-              <Button variant="outlined">Create Task</Button>
+              <CreateTask acronym={acronym} />
             </Box>
             <Grid container spacing={1} justifyContent="center">
               {Object.keys(tasks).map((columnId) => (

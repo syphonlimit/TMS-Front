@@ -194,8 +194,8 @@ export default function Home() {
   };
 
   //kanban
-  const kanban = () => {
-    navigate("/kanban");
+  const kanban = (acronym) => {
+    navigate("/kanban", { state: { acronym: acronym } });
   };
 
   //Run once on page load
@@ -539,7 +539,7 @@ export default function Home() {
               <Button id={item.App_Acronym + "_button"} variant="outlined" onClick={(e) => handleSubmit(e, item)}>
                 {item.editDisabled ? "Edit" : "Save"}
               </Button>
-              <Button id={item.App_Acronym + "_button"} variant="outlined" onClick={kanban}>
+              <Button id={item.App_Acronym + "_button"} variant="outlined" onClick={() => kanban(item.App_Acronym)}>
                 Kanban
               </Button>
             </TableCell>
