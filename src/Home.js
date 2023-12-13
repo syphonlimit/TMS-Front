@@ -10,6 +10,7 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
 import axios from "axios";
 import Cookies from "js-cookie";
 import * as React from "react";
@@ -574,6 +575,9 @@ export default function Home() {
               pauseOnHover
               theme="light"
             />
+            <Typography component="h1" variant="h5" align="center" paddingBottom={5}>
+              Application List
+            </Typography>
             <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
               <TableHead>
                 <TableRow>

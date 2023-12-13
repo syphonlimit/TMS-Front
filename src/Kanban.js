@@ -103,7 +103,9 @@ export default function Kanban() {
             <Box mb={2} paddingLeft={20}>
               {/* Leave space for buttons */}
               <CreateTask acronym={acronym} />
-              <Button onClick={createPlan}>Create Plan</Button>
+              <Button onClick={createPlan} variant="outlined">
+                Create Plan
+              </Button>
             </Box>
             <Grid container spacing={1} justifyContent="center">
               {Object.keys(tasks).map((columnId) => (
