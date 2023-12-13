@@ -2,14 +2,15 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Container, Grid, IconButton, List, ListItem, ListItemText, Paper, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Cookies from "js-cookie";
 import * as React from "react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import CreateTask from "./CreateTask";
 import Appbar from "./Appbar";
+import CreateTask from "./CreateTask";
 
 const defaultTheme = createTheme();
 
@@ -48,6 +49,10 @@ export default function Kanban() {
     headers: {
       Authorization: "Bearer " + Cookies.get("token"),
     },
+  };
+
+  const createPlan = () => {
+    navigate("/plan", { state: { acronym: acronym } });
   };
 
   const [tasks, setTasks] = useState(initialTasks);
@@ -98,6 +103,7 @@ export default function Kanban() {
             <Box mb={2} paddingLeft={20}>
               {/* Leave space for buttons */}
               <CreateTask acronym={acronym} />
+              <Button onClick={createPlan}>Create Plan</Button>
             </Box>
             <Grid container spacing={1} justifyContent="center">
               {Object.keys(tasks).map((columnId) => (
