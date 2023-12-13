@@ -14,11 +14,11 @@ const defaultTheme = createTheme();
 
 const initialTasks = {
   open: [
-    { id: "task-1", content: "Task 1" },
-    { id: "task-2", content: "Task 2" },
-    { id: "task-11", content: "Task 11" },
-    { id: "task-12", content: "Task 12" },
-    { id: "task-13", content: "Task 13" },
+    { id: "task-1", content: "Nigeru?" },
+    { id: "task-2", content: "Dare da!?" },
+    { id: "task-11", content: "Douko e?" },
+    { id: "task-12", content: "Naze!!!" },
+    { id: "task-13", content: "Beat down, Rise up" },
     { id: "task-14", content: "Task 14" },
     { id: "task-15", content: "Task 15" },
   ],
@@ -28,7 +28,7 @@ const initialTasks = {
   ],
   doing: [
     { id: "task-5", content: "What am I doing" },
-    { id: "task-6", content: "Task 6" },
+    { id: "task-6", content: "Beat down, Rise up" },
   ],
   done: [
     { id: "task-7", content: "Task 7" },
@@ -87,7 +87,7 @@ export default function Kanban() {
         <Box
           sx={{
             bgcolor: "background.paper",
-            pt: 2,
+            pt: 1,
             pb: 6,
           }}
         >
@@ -105,11 +105,11 @@ export default function Kanban() {
                     </Typography>
                     <List>
                       {tasks[columnId].map((task, index) => (
-                        <Paper key={task.id} variant="outlined" style={{ margin: "8px", padding: "8px" }}>
+                        <Paper key={task.id} variant="outlined" style={{ margin: "5px" }}>
                           <ListItem>
                             <ListItemText>{task.content}</ListItemText>
                             <div style={{ display: "flex", justifyContent: "center" }}>
-                              {columnId !== "open" && columnId !== "close" && (
+                              {columnId !== "open" && columnId !== "todo" && columnId !== "close" && (
                                 <IconButton size="small" color="primary" onClick={() => promoteTask(columnId, index)}>
                                   <ArrowBackIcon />
                                 </IconButton>
