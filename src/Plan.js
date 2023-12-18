@@ -97,6 +97,7 @@ export default function Plan() {
       //get the values for the row from the table state
       const startDate = table.find((row) => row.Plan_MVP_name === id).Plan_startDate;
       const endDate = table.find((row) => row.Plan_MVP_name === id).Plan_endDate;
+      const planName = table.find((row) => row.Plan_MVP_name === id).Plan_MVP_name;
       const body = {};
       if (startDate !== "" && startDate !== undefined) {
         body.startDate = startDate;
@@ -104,8 +105,10 @@ export default function Plan() {
       if (endDate !== "" && endDate !== undefined) {
         body.endDate = endDate;
       }
+      body.planName = planName;
+      body.planAcronym = acronym;
       try {
-        const response = await axios.put("http://localhost:8080/controller/updateApp/" + row.Plan_MVP_name, body, config);
+        const response = await axios.post("http://localhost:8080/controller/updatePlan/", body, config);
         toast.success(response.data.message, { autoClose: 1500 });
         setCall(call + 1);
         setTable(
@@ -285,9 +288,6 @@ export default function Plan() {
             <TableCell align="center">
               <Button id={item.Plan_MVP_name + "_button"} variant="outlined" onClick={(e) => handleSubmit(e, item)}>
                 {item.editDisabled ? "Edit" : "Save"}
-              </Button>
-              <Button id={item.Plan_MVP_name + "_button"} variant="outlined" onClick={() => kanban(item.Plan_MVP_name)}>
-                Kanban
               </Button>
             </TableCell>
           </TableRow>

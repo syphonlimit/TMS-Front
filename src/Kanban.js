@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Appbar from "./Appbar";
 import CreateTask from "./CreateTask";
+import ViewTask from "./ViewTask";
 
 const defaultTheme = createTheme();
 
@@ -44,6 +45,9 @@ const initialTasks = {
 
 export default function Kanban() {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const { acronym } = state;
+
   //Authorization
   const config = {
     headers: {
@@ -85,8 +89,6 @@ export default function Kanban() {
     }
   };
 
-  const { state } = useLocation();
-  const { acronym } = state;
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
@@ -106,6 +108,7 @@ export default function Kanban() {
               <Button onClick={createPlan} variant="outlined">
                 Create Plan
               </Button>
+              <ViewTask taskId="farm9009" acronym={acronym} />
             </Box>
             <Grid container spacing={1} justifyContent="center">
               {Object.keys(tasks).map((columnId) => (

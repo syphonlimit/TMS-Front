@@ -46,18 +46,6 @@ export default function Home() {
   const [table, setTable] = useState([]);
   const [groupOptions, setGroupOptions] = React.useState([]);
 
-  //Handles key down events in the react-select field for 'Create group'
-  const handleKeyDown = (event) => {
-    if (!inputValue) return;
-    switch (event.key) {
-      case "Enter":
-      case "Tab":
-        setCreateValue((prev) => [...prev, createOption(inputValue)]);
-        setInputValue("");
-        event.preventDefault();
-    }
-  };
-
   //Getting the info from database to populate the table
   async function fetchData() {
     try {
