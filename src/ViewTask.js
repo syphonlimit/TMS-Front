@@ -62,25 +62,28 @@ export default function ViewTask(props) {
 
     try {
       //Communicate with backend using Axios request
-      const res = await axios.post("http://localhost:8080/controller/updateTasknotes/" + props.taskId, task, config);
-      if (taskPlan.value) {
+      if (taskPlan?.value !== null && taskPlan?.value !== taskValue?.Task_plan) {
         const plan = {
           plan: taskPlan.value,
           note: data.get("newNote"),
           acronym: props.acronym,
         };
         const res2 = await axios.post("http://localhost:8080/controller/assignTaskToPlan/" + props.taskId, plan, config);
+      } else {
+        const res = await axios.post("http://localhost:8080/controller/updateTasknotes/" + props.taskId, task, config);
       }
 
       toast.success("Task updated successfully", { autoClose: 1500 });
       setButt("Edit");
       setDisable(true);
+
       setOpen(false);
+      getTask();
     } catch (error) {
       if (error.response) {
-        toast.error(error.response.data.errMessage);
+        toast.error(error.response.data.errMessage, { autoClose: 1500 });
       } else {
-        toast.error("Server has issues.");
+        toast.error("Server has issues.", { autoClose: 1500 });
       }
     }
   };
