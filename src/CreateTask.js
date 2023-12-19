@@ -35,7 +35,6 @@ export default function CreateTask(props) {
   };
 
   const handleSubmit = async (event) => {
-    console.log("hello");
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const task = {
