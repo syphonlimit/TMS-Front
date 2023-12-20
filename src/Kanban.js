@@ -20,6 +20,7 @@ export default function Kanban(props) {
   const navigate = useNavigate();
   const { state } = useLocation();
   const { acronym } = state;
+  const [call, setCall] = useState(0);
 
   //Authorization
   const config = {
@@ -61,7 +62,7 @@ export default function Kanban(props) {
       }
     };
     checkGroup();
-  }, []);
+  }, [call]);
 
   useEffect(() => {
     //Checkgroup function here for Manage Plan button
@@ -78,7 +79,7 @@ export default function Kanban(props) {
       }
     };
     checkGroup();
-  }, []);
+  }, [call]);
 
   const fetchData = async () => {
     try {
@@ -119,9 +120,8 @@ export default function Kanban(props) {
   };
 
   useEffect(() => {
-    console.log("Calling for data");
     fetchData();
-  }, [props.call]);
+  }, [call]);
 
   const createPlan = () => {
     navigate("/plan", { state: { acronym: acronym } });
@@ -142,7 +142,7 @@ export default function Kanban(props) {
           <Container maxWidth="false" style={{ padding: "16px" }}>
             <Box mb={2} paddingLeft={1}>
               {/* Leave space for buttons */}
-              {isUserPL && <CreateTask acronym={acronym} />}
+              {isUserPL && <CreateTask acronym={acronym} call={call} setCall={setCall} />}
               {isUserPM && (
                 <Button onClick={createPlan} variant="outlined">
                   Manage Plan
@@ -167,7 +167,7 @@ export default function Kanban(props) {
                     </Typography>
                     {tasks[status].length > 0 ? (
                       tasks[status].map((tasks) => (
-                        <ViewTask task={tasks} taskState={status} taskIndex={index} acronym={acronym} getTask={fetchData} />
+                        <ViewTask task={tasks} taskState={status} taskIndex={index} acronym={acronym} setCall={setCall} call={call} array={array} />
                       ))
                     ) : (
                       <Typography style={{ textAlign: "center", marginTop: "20px" }}>No tasks in "{status}"</Typography>

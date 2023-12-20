@@ -299,7 +299,7 @@ export default function Plan() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
-      <Appbar />
+      <Appbar title="Plan" />
       <main>
         <Container maxWidth="md">
           <Box

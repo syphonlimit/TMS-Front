@@ -46,6 +46,7 @@ export default function CreateTask(props) {
       //Communicate with backend using Axios request
       const res = await axios.post("http://localhost:8080/controller/createTask", task, config);
       toast.success("Task created successfully", { autoClose: 1500 });
+      props.setCall(props.call + 1);
       setOpen(false);
     } catch (error) {
       if (error.response) {

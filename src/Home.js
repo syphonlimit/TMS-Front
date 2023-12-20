@@ -31,6 +31,7 @@ export default function Home() {
   const [call, setCall] = useState(0);
   const [inputValue, setInputValue] = useState("");
   const [createValue, setCreateValue] = useState([]);
+  const [isUserPL, setIsUserPL] = useState(false);
   const [app, setApp] = useState({
     application: "",
     startDate: "",
@@ -46,11 +47,27 @@ export default function Home() {
   const [table, setTable] = useState([]);
   const [groupOptions, setGroupOptions] = React.useState([]);
 
+  useEffect(() => {
+    //Checkgroup function here for Create App only if PL
+    const checkGroup = async () => {
+      try {
+        const res = await axios.post("http://localhost:8080/controller/checkGroup", { group: "PL" }, config);
+        if (res.data) {
+          setIsUserPL(true);
+        }
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 401) navigate("/");
+        }
+      }
+    };
+    checkGroup();
+  }, []);
+
   //Getting the info from database to populate the table
   async function fetchData() {
     try {
       const res = await axios.get("http://localhost:8080/controller/getApps/", config);
-      console.log(res);
       //set user to table default edit disabled
       setTable(
         res.data.data.map((application) => {
@@ -246,120 +263,122 @@ export default function Home() {
     //App creation fields
     return (
       <>
-        <TableRow key={state.application} noValidate>
-          <TableCell align="center" width={150}>
-            <Child id={"application"} item={state.application} onChange={onInputChange} disabled={false} />
-          </TableCell>
-          <TableCell align="center" width={150}>
-            <Grid xs={12} align="center">
-              <Child id={"startDate"} item={state.startDate} onChange={onInputChange} disabled={false} placeDate={"dd/mm/yyyy"} label={"Start"} />
-            </Grid>
-            <Grid xs={12} align="center" width={150}>
-              <Child id={"endDate"} item={state.endDate} onChange={onInputChange} disabled={false} placeDate={"dd/mm/yyyy"} label={"End"} />
-            </Grid>
-          </TableCell>
-          <TableCell align="center" width={100}>
-            <Child id={"rNum"} item={state.rNum} onChange={onInputChange} disabled={false} />
-          </TableCell>
-          <TableCell align="center" width={350}>
-            <Child id={"description"} item={state.description} onChange={onInputChange} disabled={false} multilines={true} multirows={3} />
-          </TableCell>
-          <TableCell align="center">
-            <Select
-              onChange={(event) =>
-                //combine the values into a comma separated string
-                setApp({
-                  ...app,
-                  permCreate: event ? event.value : "",
-                })
-              }
-              name="colors"
-              options={groupOptions}
-              className="basic-single-select"
-              classNamePrefix="select"
-              isClearable={true}
-              //read from user.group_list and match exactly
-              value={groupOptions.find((option) => option.value === app.permCreate)}
-            />
-          </TableCell>
-          <TableCell align="center">
-            <Select
-              onChange={(event) =>
-                //combine the values into a comma separated string
-                setApp({
-                  ...app,
-                  permOpen: event ? event.value : "",
-                })
-              }
-              name="colors"
-              options={groupOptions}
-              className="basic-single-select"
-              classNamePrefix="select"
-              isClearable={true}
-              //read from user.group_list and match exactly
-              value={groupOptions.find((option) => option.value === app.permOpen)}
-            />
-          </TableCell>
-          <TableCell align="center">
-            <Select
-              onChange={(event) =>
-                //combine the values into a comma separated string
-                setApp({
-                  ...app,
-                  permToDo: event ? event.value : "",
-                })
-              }
-              name="colors"
-              options={groupOptions}
-              className="basic-single-select"
-              classNamePrefix="select"
-              isClearable={true}
-              //read from user.group_list and match exactly
-              value={groupOptions.find((option) => option.value === app.permToDo)}
-            />
-          </TableCell>
-          <TableCell align="center">
-            <Select
-              onChange={(event) =>
-                //combine the values into a comma separated string
-                setApp({
-                  ...app,
-                  permDoing: event ? event.value : "",
-                })
-              }
-              name="colors"
-              options={groupOptions}
-              className="basic-single-select"
-              classNamePrefix="select"
-              isClearable={true}
-              //read from user.group_list and match exactly
-              value={groupOptions.find((option) => option.value === app.permDoing)}
-            />
-          </TableCell>
-          <TableCell align="center">
-            <Select
-              onChange={(event) =>
-                //combine the values into a comma separated string
-                setApp({
-                  ...app,
-                  permDone: event ? event.value : "",
-                })
-              }
-              name="colors"
-              options={groupOptions}
-              className="basic-single-select"
-              classNamePrefix="select"
-              isClearable={true}
-              //read from user.group_list and match exactly
-              value={groupOptions.find((option) => option.value === app.permDone)}
-            />
-          </TableCell>
-          <TableCell align="center">
-            <Button variant="outlined" onClick={createApp}>
-              Create
-            </Button>
-          </TableCell>
-        </TableRow>
+        {isUserPL && (
+          <TableRow key={state.application} noValidate>
+            <TableCell align="center" width={150}>
+              <Child id={"application"} item={state.application} onChange={onInputChange} disabled={false} />
+            </TableCell>
+            <TableCell align="center" width={150}>
+              <Grid xs={12} align="center">
+                <Child id={"startDate"} item={state.startDate} onChange={onInputChange} disabled={false} placeDate={"dd/mm/yyyy"} label={"Start"} />
+              </Grid>
+              <Grid xs={12} align="center" width={150}>
+                <Child id={"endDate"} item={state.endDate} onChange={onInputChange} disabled={false} placeDate={"dd/mm/yyyy"} label={"End"} />
+              </Grid>
+            </TableCell>
+            <TableCell align="center" width={100}>
+              <Child id={"rNum"} item={state.rNum} onChange={onInputChange} disabled={false} />
+            </TableCell>
+            <TableCell align="center" width={350}>
+              <Child id={"description"} item={state.description} onChange={onInputChange} disabled={false} multilines={true} multirows={3} />
+            </TableCell>
+            <TableCell align="center">
+              <Select
+                onChange={(event) =>
+                  //combine the values into a comma separated string
+                  setApp({
+                    ...app,
+                    permCreate: event ? event.value : "",
+                  })
+                }
+                name="colors"
+                options={groupOptions}
+                className="basic-single-select"
+                classNamePrefix="select"
+                isClearable={true}
+                //read from user.group_list and match exactly
+                value={groupOptions.find((option) => option.value === app.permCreate)}
+              />
+            </TableCell>
+            <TableCell align="center">
+              <Select
+                onChange={(event) =>
+                  //combine the values into a comma separated string
+                  setApp({
+                    ...app,
+                    permOpen: event ? event.value : "",
+                  })
+                }
+                name="colors"
+                options={groupOptions}
+                className="basic-single-select"
+                classNamePrefix="select"
+                isClearable={true}
+                //read from user.group_list and match exactly
+                value={groupOptions.find((option) => option.value === app.permOpen)}
+              />
+            </TableCell>
+            <TableCell align="center">
+              <Select
+                onChange={(event) =>
+                  //combine the values into a comma separated string
+                  setApp({
+                    ...app,
+                    permToDo: event ? event.value : "",
+                  })
+                }
+                name="colors"
+                options={groupOptions}
+                className="basic-single-select"
+                classNamePrefix="select"
+                isClearable={true}
+                //read from user.group_list and match exactly
+                value={groupOptions.find((option) => option.value === app.permToDo)}
+              />
+            </TableCell>
+            <TableCell align="center">
+              <Select
+                onChange={(event) =>
+                  //combine the values into a comma separated string
+                  setApp({
+                    ...app,
+                    permDoing: event ? event.value : "",
+                  })
+                }
+                name="colors"
+                options={groupOptions}
+                className="basic-single-select"
+                classNamePrefix="select"
+                isClearable={true}
+                //read from user.group_list and match exactly
+                value={groupOptions.find((option) => option.value === app.permDoing)}
+              />
+            </TableCell>
+            <TableCell align="center">
+              <Select
+                onChange={(event) =>
+                  //combine the values into a comma separated string
+                  setApp({
+                    ...app,
+                    permDone: event ? event.value : "",
+                  })
+                }
+                name="colors"
+                options={groupOptions}
+                className="basic-single-select"
+                classNamePrefix="select"
+                isClearable={true}
+                //read from user.group_list and match exactly
+                value={groupOptions.find((option) => option.value === app.permDone)}
+              />
+            </TableCell>
+            <TableCell align="center">
+              <Button variant="outlined" onClick={createApp}>
+                Create
+              </Button>
+            </TableCell>
+          </TableRow>
+        )}
       </>
     );
   }
@@ -371,7 +390,6 @@ export default function Home() {
 
     const onInputChange = (index, item) => {
       state[index][item.type] = item.content;
-      console.log(item.type);
     };
 
     //Update field behaviour upon clicking 'Edit'
@@ -525,9 +543,11 @@ export default function Home() {
             </TableCell>
             {/* Edit and disable/enable button */}
             <TableCell align="center">
-              <Button id={item.App_Acronym + "_button"} variant="outlined" onClick={(e) => handleSubmit(e, item)}>
-                {item.editDisabled ? "Edit" : "Save"}
-              </Button>
+              {isUserPL && (
+                <Button id={item.App_Acronym + "_button"} variant="outlined" onClick={(e) => handleSubmit(e, item)}>
+                  {item.editDisabled ? "Edit" : "Save"}
+                </Button>
+              )}
               <Button id={item.App_Acronym + "_button"} variant="outlined" onClick={() => kanban(item.App_Acronym)}>
                 Kanban
               </Button>

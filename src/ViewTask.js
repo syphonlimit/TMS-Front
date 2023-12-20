@@ -30,13 +30,13 @@ export default function ViewTask(props) {
   const [taskPlan, setTaskPlan] = React.useState(null);
   const [butt, setButt] = React.useState("Edit");
   const [disable, setDisable] = React.useState(true);
+  const [disablePlan, setDisablePlan] = React.useState(true);
   const [openedByArrow, setOpenedByArrow] = useState(false);
   const [arrowDirection, setArrowDirection] = useState("none");
   const [selectedTask, setSelectedTask] = useState(null);
   const location = useLocation();
   const [updatedNotes, setUpdatedNotes] = useState("");
-  const [call, setCall] = useState(0);
-  const [forceRerender, setForceRerender] = useState(false);
+  const [submitTask, setSubmitTask] = useState("");
 
   const initialTaskStates = {
     Open: [],
@@ -46,7 +46,7 @@ export default function ViewTask(props) {
     Close: [],
   };
   const [tasks, setTasks] = useState(initialTaskStates);
-  const { task, taskState, taskIndex, acronym, state } = props;
+  const { task, taskState, taskIndex, acronym, state, call, setCall, array } = props;
 
   //Permission states
   const [isUserPL, setIsUserPL] = useState(false);
@@ -80,7 +80,7 @@ export default function ViewTask(props) {
       }
     };
     checkGroup();
-  }, []);
+  }, [call]);
 
   useEffect(() => {
     //Checkgroup function here for Manage Plan button
@@ -97,7 +97,7 @@ export default function ViewTask(props) {
       }
     };
     checkGroup();
-  }, []);
+  }, [call]);
 
   useEffect(() => {
     //Checkgroup function here for App Permit Create
@@ -115,7 +115,7 @@ export default function ViewTask(props) {
       }
     };
     checkGroup();
-  }, []);
+  }, [call]);
 
   useEffect(() => {
     //Checkgroup function here for App Permit Open
@@ -133,7 +133,7 @@ export default function ViewTask(props) {
       }
     };
     checkGroup();
-  }, []);
+  }, [call]);
 
   useEffect(() => {
     //Checkgroup function here for App Permit Todo
@@ -151,7 +151,7 @@ export default function ViewTask(props) {
       }
     };
     checkGroup();
-  }, []);
+  }, [call]);
 
   useEffect(() => {
     //Checkgroup function here for App Permit Doing
@@ -169,7 +169,7 @@ export default function ViewTask(props) {
       }
     };
     checkGroup();
-  }, []);
+  }, [call]);
 
   useEffect(() => {
     //Checkgroup function here for App Permit Done
@@ -187,7 +187,56 @@ export default function ViewTask(props) {
       }
     };
     checkGroup();
+  }, [call]);
+
+  useEffect(() => {
+    return () => {
+      //reset all the permit states
+      setPermitCreate(false);
+      setPermitOpen(false);
+      setPermitToDo(false);
+      setPermitDoing(false);
+      setPermitDone(false);
+      setIsUserPL(false);
+      setIsUserPM(false);
+    };
   }, []);
+
+  const canDemoteTask = (taskState) => {
+    return taskState === "Doing" || taskState === "Done";
+  };
+
+  const checkPermitForLane = (lane) => {
+    switch (lane) {
+      case "Open":
+        return permitOpen;
+      case "ToDo":
+        return permitToDo;
+      case "Doing":
+        return permitDoing;
+      case "Done":
+        return permitDone;
+      default:
+        return false;
+    }
+  };
+
+  const renderActionButton = () => {
+    if (arrowDirection === "left") {
+      return (
+        <Button onClick={handlePromoteDemote} variant="outlined" color="secondary">
+          Demote
+        </Button>
+      );
+    } else if (arrowDirection === "right") {
+      return (
+        <Button onClick={handlePromoteDemote} variant="outlined" color="secondary">
+          Promote
+        </Button>
+      );
+    }
+    return null;
+  };
 
   //Function to process the tasks retrieved from the database into the format required by the board
   const processData = (data) => {
@@ -227,9 +276,9 @@ export default function ViewTask(props) {
     }
   };
 
-  const renderArrowForward = (taskState, task, taskIndex) => {
+  const renderArrowForward = (taskState, task, taskIndex, tasklength) => {
     const keys = Object.keys(task);
-    if (taskIndex < keys.length - 1 && checkPermitForLane(taskState)) {
+    if (taskIndex < tasklength - 1 && checkPermitForLane(taskState)) {
       return (
         <IconButton onClick={(event) => handleMoveTask(event, task, Object.keys(taskStates)[taskIndex + 1], "right")}>
           <ArrowForwardIcon />
@@ -240,7 +289,6 @@ export default function ViewTask(props) {
   };
 
   const renderArrowBack = (taskState, task, taskIndex) => {
-    const keys = Object.keys(task);
     if (canDemoteTask(taskState) && checkPermitForLane(taskState)) {
       return (
         <IconButton key={permitCreate} onClick={(event) => handleMoveTask(event, task, Object.keys(taskStates)[taskIndex - 1], "left")}>
@@ -253,54 +301,22 @@ export default function ViewTask(props) {
 
   const handleMoveTask = async (event, task, nextState, direction) => {
     event.stopPropagation();
+    if (isUserPL) {
+      setDisablePlan(false);
+      getPlans();
+    }
     // Fetch the task details again if necessary
     try {
       const res = await axios.post("http://localhost:8080/controller/getTask", { taskId: task.id }, config);
       setSelectedTask({ ...res.data.data, nextState });
+      enableEdit();
       setOpenedByArrow(true);
       setArrowDirection(direction); // Set the direction of the arrow clicked
       handleClickOpen();
-      setCall(call + 1);
-      console.log("hello");
     } catch (err) {
       // handle error
     }
-  };
-
-  const canDemoteTask = (taskState) => {
-    return taskState === "Doing" || taskState === "Done";
-  };
-
-  const checkPermitForLane = (lane) => {
-    switch (lane) {
-      case "Open":
-        return permitOpen;
-      case "ToDo":
-        return permitToDo;
-      case "Doing":
-        return permitDoing;
-      case "Done":
-        return permitDone;
-      default:
-        return false;
-    }
-  };
-
-  const renderActionButton = () => {
-    if (arrowDirection === "left") {
-      return (
-        <Button onClick={handlePromoteDemote} variant="outlined" color="secondary">
-          Demote
-        </Button>
-      );
-    } else if (arrowDirection === "right") {
-      return (
-        <Button onClick={handlePromoteDemote} variant="outlined" color="secondary">
-          Promote
-        </Button>
-      );
-    }
-    return null;
+    setCall(call + 1);
   };
 
   const handlePromoteDemote = async () => {
@@ -308,9 +324,8 @@ export default function ViewTask(props) {
       console.error("Selected task or nextState is not defined.");
       return;
     }
-
-    if (updatedNotes === "") {
-      setUpdatedNotes(null);
+    if (submitTask === "") {
+      setSubmitTask(null);
     }
 
     let url;
@@ -319,10 +334,12 @@ export default function ViewTask(props) {
         url = `http://localhost:8080/controller/promoteTask/${selectedTask[0].Task_id}`;
         break;
       case "left": // Demote
-        if (selectedTask.Task_state === "Done") {
+        if (selectedTask[0].Task_state === "Done") {
           url = `http://localhost:8080/controller/rejectTask/${selectedTask[0].Task_id}`;
-        } else if (selectedTask.Task_state === "Doing") {
+        } else if (selectedTask[0].Task_state === "Doing") {
           url = `http://localhost:8080/controller/returnTask/${selectedTask[0].Task_id}`;
+        } else {
+          console.error("Task status invalid ", selectedTask[0].Task_state);
         }
         break;
       default:
@@ -338,11 +355,10 @@ export default function ViewTask(props) {
     //if demoting, we want to check if the project lead reassigned a new task plan
 
     try {
-      const res = await axios.put(url, { Task_notes: updatedNotes, Task_plan: taskPlan?.value || null }, config);
+      const res = await axios.put(url, { Task_notes: submitTask, Task_plan: taskPlan?.value || null }, config);
       toast.success(res.data.message, { autoClose: 1500 });
       fetchData(); // Refresh data
       handleClose();
-      console.log(call);
     } catch (err) {
       if (err.response) {
         toast.error(err.response.data.errMessage);
@@ -355,6 +371,7 @@ export default function ViewTask(props) {
         toast.error("Server has flibby");
       }
     }
+    setCall(call + 1);
   };
 
   const handleChange = (event) => {
@@ -368,6 +385,7 @@ export default function ViewTask(props) {
   const handleClose = () => {
     setButt("Edit");
     setDisable(true);
+    setDisablePlan(true);
     setOpen(false);
   };
 
@@ -402,11 +420,9 @@ export default function ViewTask(props) {
       } else {
         const res = await axios.post("http://localhost:8080/controller/updateTasknotes/" + task.id, task, config);
       }
-
       toast.success("Task updated successfully", { autoClose: 1500 });
       setButt("Edit");
       setDisable(true);
-
       setOpen(false);
       getTask();
     } catch (error) {
@@ -414,8 +430,10 @@ export default function ViewTask(props) {
         toast.error(error.response.data.errMessage, { autoClose: 1500 });
       } else {
         toast.error("Server has issues.", { autoClose: 1500 });
+        handleClose();
       }
     }
+    setCall(call + 1);
   };
   async function getTask() {
     try {
@@ -430,7 +448,6 @@ export default function ViewTask(props) {
   useEffect(() => {
     getTask();
     getPlans();
-    console.log("Call state changed. Fetching data...");
     fetchData();
   }, [call]);
 
@@ -469,7 +486,7 @@ export default function ViewTask(props) {
         }}
         onClick={(e) => handleClickOpen(task.id)}
       >
-        {renderArrowBack(taskState, task, taskIndex, task.length)}
+        {renderArrowBack(taskState, task, taskIndex, array.length)}
         {/* Task Name and ID */}
         <Box
           style={{
@@ -488,7 +505,7 @@ export default function ViewTask(props) {
             {task.id}
           </Typography>
         </Box>
-        {renderArrowForward(taskState, task, taskIndex, task.length)}
+        {renderArrowForward(taskState, task, taskIndex, array.length)}
       </Paper>
       <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
         <Container maxWidth="lg">
@@ -527,7 +544,7 @@ export default function ViewTask(props) {
                   <Select
                     className="basic-single-select"
                     classNamePrefix="select"
-                    isDisabled={disable}
+                    isDisabled={disablePlan}
                     options={groupOptions}
                     onChange={handleChange}
                     isClearable={true}
@@ -557,7 +574,16 @@ export default function ViewTask(props) {
                 <Typography variant="h6" paddingTop={1}>
                   New Notes
                 </Typography>
-                <TextField id="newNote" name="newNote" className="newNote" multiline rows={3} fullWidth disabled={disable}></TextField>
+                <TextField
+                  id="newNote"
+                  name="newNote"
+                  className="newNote"
+                  multiline
+                  rows={3}
+                  fullWidth
+                  disabled={disable}
+                  onChange={(e) => setSubmitTask(e.target.value)}
+                ></TextField>
               </Grid>
               <Grid xs={2} paddingTop={3}>
                 <Button variant="outlined" size="large" onClick={handleClose}>
