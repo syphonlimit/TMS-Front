@@ -36,6 +36,7 @@ export default function ViewTask(props) {
   const location = useLocation();
   const [updatedNotes, setUpdatedNotes] = useState("");
   const [call, setCall] = useState(0);
+  const [forceRerender, setForceRerender] = useState(false);
 
   const initialTaskStates = {
     Open: [],
@@ -255,12 +256,12 @@ export default function ViewTask(props) {
     // Fetch the task details again if necessary
     try {
       const res = await axios.post("http://localhost:8080/controller/getTask", { taskId: task.id }, config);
-      console.log(...res.data.data);
-      console.log(nextState);
       setSelectedTask({ ...res.data.data, nextState });
       setOpenedByArrow(true);
       setArrowDirection(direction); // Set the direction of the arrow clicked
       handleClickOpen();
+      setCall(call + 1);
+      console.log("hello");
     } catch (err) {
       // handle error
     }
@@ -339,10 +340,9 @@ export default function ViewTask(props) {
     try {
       const res = await axios.put(url, { Task_notes: updatedNotes, Task_plan: taskPlan?.value || null }, config);
       toast.success(res.data.message, { autoClose: 1500 });
-      setCall(call + 1);
       fetchData(); // Refresh data
-
       handleClose();
+      console.log(call);
     } catch (err) {
       if (err.response) {
         toast.error(err.response.data.errMessage);
@@ -427,9 +427,11 @@ export default function ViewTask(props) {
       }
     }
   }
-  React.useEffect(() => {
+  useEffect(() => {
     getTask();
     getPlans();
+    console.log("Call state changed. Fetching data...");
+    fetchData();
   }, [call]);
 
   function getPlanName(value) {

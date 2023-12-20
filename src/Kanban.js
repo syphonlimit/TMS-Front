@@ -118,7 +118,8 @@ export default function Kanban(props) {
     return taskStates;
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
+    console.log("Calling for data");
     fetchData();
   }, [props.call]);
 
