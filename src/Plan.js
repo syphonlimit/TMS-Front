@@ -62,7 +62,6 @@ export default function Plan() {
     try {
       const planAcronym = { Plan_app_Acronym: acronym };
       const res = await axios.post("http://localhost:8080/controller/getPlans/", planAcronym, config);
-      console.log(res);
       //set user to table default edit disabled
       setTable(
         res.data.data.map((plan) => {
@@ -264,7 +263,6 @@ export default function Plan() {
 
     const onInputChange = (index, item) => {
       state[index][item.type] = item.content;
-      console.log(item.type);
     };
 
     //Update field behaviour upon clicking 'Edit'

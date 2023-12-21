@@ -272,7 +272,7 @@ export default function ViewTask(props) {
       if (err.response) {
         toast.error(err.response.data.errMessage);
       } else {
-        toast.error("Server has gibbit");
+        toast.error("Server has issues.");
       }
     }
   };
@@ -354,8 +354,6 @@ export default function ViewTask(props) {
       console.error("No URL defined for task movement.");
       return;
     }
-    console.log(taskPlan);
-    console.log(taskValue.Task_plan);
     //if demoting, we want to check if the project lead reassigned a new task plan
     try {
       const res = await axios.put(url, { Task_notes: submitTask, Task_plan: taskPlan || taskValue.Task_plan }, config);
@@ -364,7 +362,6 @@ export default function ViewTask(props) {
 
       handleClose();
     } catch (err) {
-      console.log(err);
       if (err.response) {
         toast.error(err.response.data.errMessage);
         if (err.response.data.errMessage === "You are not authorised") {
@@ -373,14 +370,13 @@ export default function ViewTask(props) {
           handleClose();
         }
       } else {
-        toast.error("Server has flibby");
+        toast.error("Server has issues");
       }
     }
     setCall(call + 1);
   };
 
   const handleChange = (event) => {
-    console.log(event);
     if (event) {
       setTaskPlan(event.value);
     }
@@ -421,10 +417,8 @@ export default function ViewTask(props) {
     };
     try {
       //Communicate with backend using Axios request
-      console.log(taskValue.Task_id);
       const res = await axios.post("http://localhost:8080/controller/updateTasknotes/" + taskValue.Task_id, task, config);
       if (taskPlan && taskPlan.value !== taskValue.Task_plan) {
-        console.log(taskPlan);
         const plan = {
           plan: taskPlan,
           note: data.get("newNote"),
@@ -438,7 +432,6 @@ export default function ViewTask(props) {
       setOpen(false);
       getTask();
     } catch (error) {
-      console.log(error);
       if (error.response) {
         toast.error(error.response.data.errMessage, { autoClose: 1500 });
       } else {
