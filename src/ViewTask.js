@@ -25,7 +25,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function ViewTask(props) {
   const [open, setOpen] = React.useState(false);
-  const [taskValue, setTaskValue] = React.useState([]);
+  const [taskValue, setTaskValue] = React.useState({});
   const [groupOptions, setGroupOptions] = React.useState([]);
   const [taskPlan, setTaskPlan] = React.useState(null);
   const [butt, setButt] = React.useState("Edit");
@@ -37,6 +37,7 @@ export default function ViewTask(props) {
   const location = useLocation();
   const [updatedNotes, setUpdatedNotes] = useState("");
   const [submitTask, setSubmitTask] = useState("");
+  const [editButton, setEditButton] = useState(true);
 
   const initialTaskStates = {
     Open: [],
@@ -222,15 +223,15 @@ export default function ViewTask(props) {
   };
 
   const renderActionButton = () => {
-    if (arrowDirection === "left") {
+    if (arrowDirection === "left" && !editButton) {
       return (
-        <Button onClick={handlePromoteDemote} variant="outlined" color="secondary">
+        <Button onClick={handlePromoteDemote} variant="outlined" color="secondary" size="large">
           Demote
         </Button>
       );
-    } else if (arrowDirection === "right") {
+    } else if (arrowDirection === "right" && !editButton) {
       return (
-        <Button onClick={handlePromoteDemote} variant="outlined" color="secondary">
+        <Button onClick={handlePromoteDemote} variant="outlined" color="secondary" size="large">
           Promote
         </Button>
       );
@@ -300,6 +301,7 @@ export default function ViewTask(props) {
   };
 
   const handleMoveTask = async (event, task, nextState, direction) => {
+    setEditButton(false);
     event.stopPropagation();
     if (isUserPL) {
       setDisablePlan(false);
@@ -310,6 +312,7 @@ export default function ViewTask(props) {
       const res = await axios.post("http://localhost:8080/controller/getTask", { taskId: task.id }, config);
       setSelectedTask({ ...res.data.data, nextState });
       enableEdit();
+      setTaskPlan(res.data.data.Task_plan);
       setOpenedByArrow(true);
       setArrowDirection(direction); // Set the direction of the arrow clicked
       handleClickOpen();
@@ -351,15 +354,17 @@ export default function ViewTask(props) {
       console.error("No URL defined for task movement.");
       return;
     }
-
+    console.log(taskPlan);
+    console.log(taskValue.Task_plan);
     //if demoting, we want to check if the project lead reassigned a new task plan
-
     try {
-      const res = await axios.put(url, { Task_notes: submitTask, Task_plan: taskPlan?.value || null }, config);
-      toast.success(res.data.message, { autoClose: 1500 });
+      const res = await axios.put(url, { Task_notes: submitTask, Task_plan: taskPlan || taskValue.Task_plan }, config);
       fetchData(); // Refresh data
+      toast.success(res.data.message, { autoClose: 1500 });
+
       handleClose();
     } catch (err) {
+      console.log(err);
       if (err.response) {
         toast.error(err.response.data.errMessage);
         if (err.response.data.errMessage === "You are not authorised") {
@@ -375,7 +380,10 @@ export default function ViewTask(props) {
   };
 
   const handleChange = (event) => {
-    setTaskPlan(event);
+    console.log(event);
+    if (event) {
+      setTaskPlan(event.value);
+    }
   };
 
   const handleClickOpen = () => {
@@ -387,6 +395,7 @@ export default function ViewTask(props) {
     setDisable(true);
     setDisablePlan(true);
     setOpen(false);
+    setEditButton(true);
   };
 
   const config = {
@@ -398,6 +407,9 @@ export default function ViewTask(props) {
   const enableEdit = () => {
     setButt("Save");
     setDisable(false);
+    if (taskValue.Task_state === "Open" || (taskValue.Task_state === "Done" && arrowDirection === "left")) {
+      setDisablePlan(false);
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -407,18 +419,18 @@ export default function ViewTask(props) {
       note: data.get("newNote"),
       acronym: props.acronym,
     };
-
     try {
       //Communicate with backend using Axios request
-      if (taskPlan?.value !== null && taskPlan?.value !== taskValue?.Task_plan) {
+      console.log(taskValue.Task_id);
+      const res = await axios.post("http://localhost:8080/controller/updateTasknotes/" + taskValue.Task_id, task, config);
+      if (taskPlan && taskPlan.value !== taskValue.Task_plan) {
+        console.log(taskPlan);
         const plan = {
-          plan: taskPlan.value,
+          plan: taskPlan,
           note: data.get("newNote"),
           acronym: props.acronym,
         };
-        const res2 = await axios.post("http://localhost:8080/controller/assignTaskToPlan/" + task.id, plan, config);
-      } else {
-        const res = await axios.post("http://localhost:8080/controller/updateTasknotes/" + task.id, task, config);
+        const res2 = await axios.post("http://localhost:8080/controller/assignTaskToPlan/" + taskValue.Task_id, plan, config);
       }
       toast.success("Task updated successfully", { autoClose: 1500 });
       setButt("Edit");
@@ -426,6 +438,7 @@ export default function ViewTask(props) {
       setOpen(false);
       getTask();
     } catch (error) {
+      console.log(error);
       if (error.response) {
         toast.error(error.response.data.errMessage, { autoClose: 1500 });
       } else {
@@ -532,7 +545,7 @@ export default function ViewTask(props) {
                 <Typography variant="h6" paddingTop={2}>
                   Task ID
                 </Typography>
-                <Typography>{props.taskId}</Typography>
+                <Typography>{taskValue.Task_id}</Typography>
                 <Typography variant="h6" paddingTop={2}>
                   Task State
                 </Typography>
@@ -546,8 +559,7 @@ export default function ViewTask(props) {
                     classNamePrefix="select"
                     isDisabled={disablePlan}
                     options={groupOptions}
-                    onChange={handleChange}
-                    isClearable={true}
+                    onChange={(e) => handleChange(e)}
                     defaultValue={taskValue.Task_plan !== null ? { label: taskValue.Task_plan, value: taskValue.Task_plan } : null}
                   />
                 </FormControl>
@@ -591,20 +603,22 @@ export default function ViewTask(props) {
                 </Button>
               </Grid>
               <Grid xs={7} paddingTop={3}></Grid>
-              <Grid xs={2} paddingTop={3}>
+              <Grid xs={2} paddingTop={3} paddingLeft={5}>
                 {selectedTask && selectedTask.nextState && renderActionButton()}
               </Grid>
-              <Grid xs={1} paddingTop={3}>
-                {butt === "Edit" ? (
-                  <Button key="edit" variant="outlined" type="button" size="large" onClick={() => enableEdit()}>
-                    {butt}
-                  </Button>
-                ) : (
-                  <Button key="submit" variant="outlined" size="large" type="submit">
-                    {butt}
-                  </Button>
-                )}
-              </Grid>
+              {editButton && (
+                <Grid xs={1} paddingTop={3}>
+                  {butt === "Edit" ? (
+                    <Button key="edit" variant="outlined" type="button" size="large" onClick={() => enableEdit()}>
+                      {butt}
+                    </Button>
+                  ) : (
+                    <Button key="submit" variant="outlined" size="large" type="submit">
+                      {butt}
+                    </Button>
+                  )}
+                </Grid>
+              )}
             </Grid>
           </Box>
         </Container>
