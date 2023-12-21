@@ -35,7 +35,6 @@ export default function ViewTask(props) {
   const [arrowDirection, setArrowDirection] = useState("none");
   const [selectedTask, setSelectedTask] = useState(null);
   const location = useLocation();
-  const [updatedNotes, setUpdatedNotes] = useState("");
   const [submitTask, setSubmitTask] = useState("");
   const [editButton, setEditButton] = useState(true);
 
@@ -47,7 +46,7 @@ export default function ViewTask(props) {
     Close: [],
   };
   const [tasks, setTasks] = useState(initialTaskStates);
-  const { task, taskState, taskIndex, acronym, state, call, setCall, array } = props;
+  const { task, taskState, taskIndex, acronym, call, setCall, array } = props;
 
   //Permission states
   const [isUserPL, setIsUserPL] = useState(false);

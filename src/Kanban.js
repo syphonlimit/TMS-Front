@@ -38,10 +38,6 @@ export default function Kanban(props) {
   };
 
   const [tasks, setTasks] = useState(initialTaskStates);
-  const [newTask, setNewTask] = useState("");
-  const [openCreateTaskModal, setOpenCreateTaskModal] = useState(false);
-  const [openTaskDetailsModal, setOpenTaskDetailsModal] = useState(false);
-  const [openTaskModal, setOpenTaskModal] = React.useState(false);
 
   //Permission states
   const [isUserPL, setIsUserPL] = useState(false);
