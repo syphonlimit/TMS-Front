@@ -31,7 +31,7 @@ export default function ViewTask(props) {
   const [butt, setButt] = React.useState("Edit");
   const [disable, setDisable] = React.useState(true);
   const [disablePlan, setDisablePlan] = React.useState(true);
-  const [openedByArrow, setOpenedByArrow] = useState(false);
+  const [openedByArrow, setOpenedByArrow] = useState();
   const [arrowDirection, setArrowDirection] = useState("none");
   const [selectedTask, setSelectedTask] = useState(null);
   const location = useLocation();
@@ -64,6 +64,10 @@ export default function ViewTask(props) {
     Done: [],
     Close: [],
   };
+
+  useEffect(() => {
+    console.log(openedByArrow);
+  }, [openedByArrow]);
 
   useEffect(() => {
     //Checkgroup function here for Create Task button
@@ -300,21 +304,24 @@ export default function ViewTask(props) {
   };
 
   const handleMoveTask = async (event, task, nextState, direction) => {
-    setEditButton(false);
     event.stopPropagation();
-    if (isUserPL) {
-      setDisablePlan(false);
-      getPlans();
+    setArrowDirection(direction); // Set the direction of the arrow clicked
+    setEditButton(false);
+    setOpenedByArrow(true);
+    if (isUserPM) {
+      setDisablePlan(true);
     }
     // Fetch the task details again if necessary
     try {
       const res = await axios.post("http://localhost:8080/controller/getTask", { taskId: task.id }, config);
       setSelectedTask({ ...res.data.data, nextState });
-      enableEdit();
+      setDisable(false);
+      if (isUserPL && nextState === "Doing") {
+        setDisablePlan(false);
+        getPlans();
+      }
       setTaskPlan(res.data.data.Task_plan);
-      setOpenedByArrow(true);
-      setArrowDirection(direction); // Set the direction of the arrow clicked
-      handleClickOpen();
+      setOpen(true);
     } catch (err) {
       // handle error
     }
@@ -355,7 +362,7 @@ export default function ViewTask(props) {
     }
     //if demoting, we want to check if the project lead reassigned a new task plan
     try {
-      const res = await axios.put(url, { Task_notes: submitTask, Task_plan: taskPlan || taskValue.Task_plan }, config);
+      const res = await axios.put(url, { Task_notes: submitTask, Task_plan: taskPlan || selectedTask[0].Task_plan }, config);
       fetchData(); // Refresh data
       toast.success(res.data.message, { autoClose: 1500 });
 
@@ -381,9 +388,29 @@ export default function ViewTask(props) {
     }
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickOpen = async () => {
+    setArrowDirection("none"); // Set the direction of the arrow clicked
+    setButt("Edit");
+    setDisablePlan(true);
+    setDisable(true);
+    try {
+      const res = await axios.post("http://localhost:8080/controller/getTask", { taskId: task.id }, config);
+      //setSelectedTask({ ...res.data.data, nextState });
+      setOpenedByArrow(false);
+      setTaskPlan(res.data.data.Task_plan);
+      setOpen(true);
+    } catch (err) {
+      // handle error
+    }
   };
+
+  useEffect(() => {
+    console.log(`arrowDirection set to: ${arrowDirection}`);
+  }, [arrowDirection]);
+
+  useEffect(() => {
+    console.log(`disablePlan set to: ${disablePlan}`);
+  }, [disablePlan]);
 
   const handleClose = () => {
     setButt("Edit");
@@ -391,6 +418,8 @@ export default function ViewTask(props) {
     setDisablePlan(true);
     setOpen(false);
     setEditButton(true);
+    setArrowDirection("none");
+    setCall(call + 1);
   };
 
   const config = {
@@ -402,9 +431,14 @@ export default function ViewTask(props) {
   const enableEdit = () => {
     setButt("Save");
     setDisable(false);
-    if (taskValue.Task_state === "Open" || (taskValue.Task_state === "Done" && arrowDirection === "left")) {
+    if (taskValue.Task_state === "Open" && isUserPM === true && openedByArrow === false) {
       setDisablePlan(false);
+    } else if (selectedTask && selectedTask[0].Task_state === "Done" && arrowDirection === "left" && isUserPL) {
+      setDisablePlan(false);
+    } else {
+      setDisablePlan(true);
     }
+    setCall(call + 1);
   };
 
   const handleSubmit = async (event) => {
@@ -416,7 +450,9 @@ export default function ViewTask(props) {
     };
     try {
       //Communicate with backend using Axios request
-      const res = await axios.post("http://localhost:8080/controller/updateTasknotes/" + taskValue.Task_id, task, config);
+      if (task.note !== null && task.note !== undefined && task.note !== "") {
+        const res = await axios.post("http://localhost:8080/controller/updateTasknotes/" + taskValue.Task_id, task, config);
+      }
       if (taskPlan && taskPlan.value !== taskValue.Task_plan) {
         const plan = {
           plan: taskPlan,
@@ -574,7 +610,7 @@ export default function ViewTask(props) {
                 <Typography variant="h6" paddingTop={1}>
                   Task Notes
                 </Typography>
-                <TextField value={taskValue.Task_notes} multiline rows={9} fullWidth disabled></TextField>
+                <TextField value={taskValue.Task_notes} multiline rows={10} fullWidth disabled></TextField>
                 <Typography variant="h6" paddingTop={1}>
                   New Notes
                 </Typography>
