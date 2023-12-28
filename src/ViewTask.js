@@ -397,6 +397,8 @@ export default function ViewTask(props) {
       const res = await axios.post("http://localhost:8080/controller/getTask", { taskId: task.id }, config);
       //setSelectedTask({ ...res.data.data, nextState });
       setOpenedByArrow(false);
+      setTaskValue(...res.data.data);
+      setSelectedTask(...res.data.data);
       setTaskPlan(res.data.data.Task_plan);
       setOpen(true);
     } catch (err) {
